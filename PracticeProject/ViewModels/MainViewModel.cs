@@ -50,6 +50,15 @@ namespace PracticeProject.ViewModels
                 IconKind = PackIconKind.Lan,
                 Text = "通讯设置",
                 PageName = "PlcConnectionView"
+            }
+            
+            );
+
+            dataCollection.Children.Add(new MainModel
+            {
+                IconKind= PackIconKind.Road,
+                Text="通讯界面",
+                PageName= "PlcSettingPage"
             });
             MenuItems.Add(dataCollection);
 

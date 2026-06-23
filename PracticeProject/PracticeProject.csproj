@@ -24,4 +24,10 @@
     <Resource Include="Image\Logo.png" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="PracticeModel\" />
+    <Folder Include="PracticeServive\" />
+    <Folder Include="PracticeIservice\" />
+  </ItemGroup>
+
 </Project>

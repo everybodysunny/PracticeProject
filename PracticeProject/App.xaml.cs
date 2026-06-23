@@ -55,6 +55,7 @@ namespace PracticeProject
             containerRegistry.RegisterForNavigation<HomeView, HomeViewModel>();
             containerRegistry.RegisterForNavigation<PlcConnectionView, PlcConnectionViewModel>();
             containerRegistry.RegisterForNavigation<SqlConnectionView, SqlConnectionViewModel>();
+            containerRegistry.RegisterForNavigation<PlcSettingPage,PlcSettingViewModel>();
         }
 
         /// <summary>

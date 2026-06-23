@@ -54,3 +54,6 @@ D:\StudyMyself\PracticeProject\PracticeProject\bin\Debug\net8.0-windows\runtimes
 D:\StudyMyself\PracticeProject\PracticeProject\bin\Debug\net8.0-windows\runtimes\unix\lib\netcoreapp2.1\System.Data.SqlClient.dll
 D:\StudyMyself\PracticeProject\PracticeProject\bin\Debug\net8.0-windows\runtimes\win\lib\netcoreapp2.1\System.Data.SqlClient.dll
 D:\StudyMyself\PracticeProject\PracticeProject\obj\Debug\net8.0-windows\Views\HomeView.baml
+D:\StudyMyself\PracticeProject\PracticeProject\obj\Debug\net8.0-windows\Views\PlcSettingPage.g.cs
+D:\StudyMyself\PracticeProject\PracticeProject\obj\Debug\net8.0-windows\Views\PlcSettingPage.baml
+D:\StudyMyself\PracticeProject\PracticeProject\obj\Debug\net8.0-windows\PracticeProject.sourcelink.json

@@ -8,6 +8,9 @@
     <Compile Update="Views\PlcConnectionView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\PlcSettingPage.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\SqlConnectionView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

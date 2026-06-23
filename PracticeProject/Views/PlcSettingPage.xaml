@@ -1,0 +1,80 @@
+﻿<UserControl x:Class="PracticeProject.Views.PlcSettingPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:PracticeProject.Views"
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:MaterialDseign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d" 
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <Style TargetType="Button" x:Key="connect"
+               >
+
+            <Setter Property="Background" Value="AliceBlue"/>
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="ContentTemplate">
+                <Setter.Value>
+                    <DataTemplate>
+                        <TextBlock Text="连接"/>
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="AUTO"/>
+            <RowDefinition Height="AUTO"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Border Background="AntiqueWhite" Padding="15" Margin="15" CornerRadius="15">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" >
+                <TextBlock Text="通讯设置界面" FontSize="20" FontWeight="Bold"/>
+            </StackPanel>
+        </Border>
+        <StackPanel Grid.Row="1" Margin="15" Orientation="Horizontal" VerticalAlignment="Top" Background="Wheat" >
+            <Button Content="连接"  Margin="15" Command="{Binding }"/>
+            <Button Content="读取"  Command="{Binding }"/>
+        </StackPanel>
+        <Border  Grid.Row="2" Margin="20" Background="White" CornerRadius="15">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <TextBlock Text="日志信息" FontSize="15" FontWeight="Bold" Background="AliceBlue" />
+                </StackPanel>
+                <ListView ItemsSource="{Binding LogMessages}"
+                        VirtualizingPanel.IsVirtualizing="True"
+                         VirtualizingPanel.VirtualizationMode="Recycling"
+                        ScrollViewer.CanContentScroll="True" Background="AliceBlue" Grid.Row="1">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Border Background="LightBlue" Padding="5">
+                               
+                                <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="150"/>
+                                    <ColumnDefinition Width="80"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="{Binding Time}"/>
+                                <TextBlock Grid.Column="1" Text="{Binding Level}" 
+                              Foreground="{Binding LevelColor}"/>
+                                <TextBlock Grid.Column="2" Text="{Binding Message}"/>
+                            </Grid> 
+                            </Border>
+                          
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </Grid>
+        </Border>
+
+
+    </Grid>
+</UserControl>
