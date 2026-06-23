@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>PracticeProject</id>
+    <version>1.0.0</version>
+    <authors>PracticeProject</authors>
+    <description>Package Description</description>
+    <repository type="git" />
+    <dependencies>
+      <group targetFramework="net8.0-windows7.0">
+        <dependency id="MaterialDesignThemes" version="5.3.0" exclude="Build,Analyzers" />
+        <dependency id="Prism.DryIoc" version="9.0.537" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+    <frameworkReferences>
+      <group targetFramework="net8.0-windows7.0">
+        <frameworkReference name="Microsoft.WindowsDesktop.App.WPF" />
+      </group>
+    </frameworkReferences>
+  </metadata>
+  <files>
+    <file src="D:\StudyMyself\PracticeProject\PracticeProject\bin\Debug\net8.0-windows\PracticeProject.runtimeconfig.json" target="lib\net8.0-windows7.0\PracticeProject.runtimeconfig.json" />
+    <file src="D:\StudyMyself\PracticeProject\PracticeProject\bin\Debug\net8.0-windows\PracticeProject.dll" target="lib\net8.0-windows7.0\PracticeProject.dll" />
+  </files>
+</package>

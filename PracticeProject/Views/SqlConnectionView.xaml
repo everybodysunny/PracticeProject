@@ -1,0 +1,389 @@
+﻿<UserControl
+    x:Class="PracticeProject.Views.SqlConnectionView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:PracticeProject.Views"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:prism="http://prismlibrary.com/"
+    d:DesignHeight="800"
+    d:DesignWidth="1200"
+    prism:ViewModelLocator.AutoWireViewModel="True"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <materialDesign:BundledTheme
+                    BaseTheme="Light"
+                    PrimaryColor="Blue"
+                    SecondaryColor="Pink" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesign3.Defaults.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <BooleanToVisibilityConverter x:Key="BoolToVisConverter" />
+
+            <!--
+                修复 MaterialDesign 默认 DataGrid 样式的 FindAncestor 绑定问题。
+                默认样式用 RelativeSource FindAncestor 找 DataGrid/DataGridRow 的属性，
+                在某些容器（如 materialDesign:Card）下找不到祖先，导致绑定失败。
+                这里用显式值覆盖默认样式。
+            -->
+            <Style x:Key="FixedDataGridCellStyle" TargetType="DataGridCell">
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="BorderBrush" Value="Transparent" />
+                <Setter Property="Foreground" Value="#333333" />
+                <Setter Property="Padding" Value="8,6" />
+                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="DataGridCell">
+                            <Border
+                                Padding="{TemplateBinding Padding}"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}">
+                                <ContentPresenter
+                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Style.Triggers>
+                    <Trigger Property="IsSelected" Value="True">
+                        <Setter Property="Background" Value="#E3F2FD" />
+                        <Setter Property="Foreground" Value="#0D47A1" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+            <Style x:Key="FixedDataGridRowHeaderStyle" TargetType="DataGridRowHeader">
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="BorderBrush" Value="LightGray" />
+                <Setter Property="BorderThickness" Value="0,0,1,0" />
+                <Setter Property="Padding" Value="4,0" />
+                <Setter Property="HorizontalContentAlignment" Value="Center" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+            </Style>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Grid
+        Margin="16"
+        Background="{DynamicResource MaterialDesignPaper}"
+        TextElement.FontFamily="{materialDesign:MaterialDesignFont}"
+        TextElement.FontSize="14"
+        TextElement.FontWeight="Regular"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="180" />
+        </Grid.RowDefinitions>
+
+        <!--  顶部标题与状态  -->
+        <Border
+            Grid.Row="0"
+            Margin="0,0,0,12"
+            Padding="20,16"
+            Background="White"
+            CornerRadius="10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon
+                        Width="28"
+                        Height="28"
+                        Margin="0,0,12,0"
+                        VerticalAlignment="Center"
+                        Foreground="#1976D2"
+                        Kind="Database" />
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        FontSize="20"
+                        FontWeight="Bold"
+                        Text="SQL 数据库管理" />
+                </StackPanel>
+
+                <Border
+                    Grid.Column="1"
+                    Padding="12,6"
+                    Background="{DynamicResource MaterialDesignCardBackground}"
+                    CornerRadius="12">
+                    <StackPanel Orientation="Horizontal">
+                        <Ellipse
+                            Width="10"
+                            Height="10"
+                            Margin="0,0,8,0"
+                            VerticalAlignment="Center">
+                            <Ellipse.Style>
+                                <Style TargetType="Ellipse">
+                                    <Setter Property="Fill" Value="#9E9E9E" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsConnected}" Value="True">
+                                            <Setter Property="Fill" Value="#4CAF50" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Ellipse.Style>
+                        </Ellipse>
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            FontWeight="Medium"
+                            Text="{Binding StatusText}" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Border>
+
+        <!--  连接配置区  -->
+        <materialDesign:Card
+            Grid.Row="1"
+            Margin="0,0,0,12"
+            Padding="16">
+            <StackPanel>
+                <TextBlock
+                    Margin="0,0,0,12"
+                    FontSize="15"
+                    FontWeight="Medium"
+                    Text="连接配置" />
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="80" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBox
+                        Grid.Column="0"
+                        materialDesign:HintAssist.Hint="服务器地址"
+                        Text="{Binding Server, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <TextBox
+                        Grid.Column="2"
+                        materialDesign:HintAssist.Hint="数据库名"
+                        Text="{Binding Database, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <TextBox
+                        Grid.Column="4"
+                        materialDesign:HintAssist.Hint="超时 (秒)"
+                        Text="{Binding ConnectTimeout, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <ToggleButton
+                        Grid.Column="6"
+                        VerticalAlignment="Center"
+                        Content="Windows 认证"
+                        IsChecked="{Binding IsWindowsAuth}"
+                        Style="{StaticResource MaterialDesignSwitchToggleButton}" />
+                </Grid>
+
+                <Grid Margin="0,8,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="8" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="8" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBox
+                        Grid.Column="0"
+                        materialDesign:HintAssist.Hint="用户名"
+                        IsEnabled="{Binding IsSqlAuth}"
+                        Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <PasswordBox
+                        x:Name="PasswordBox"
+                        Grid.Column="2"
+                        materialDesign:HintAssist.Hint="密码"
+                        IsEnabled="{Binding IsSqlAuth}" />
+
+                    <Button
+                        Grid.Column="4"
+                        Command="{Binding ConnectCommand}"
+                        Content="连接"
+                        Style="{StaticResource MaterialDesignRaisedButton}" />
+
+                    <Button
+                        Grid.Column="6"
+                        Command="{Binding DisconnectCommand}"
+                        Content="断开"
+                        Style="{StaticResource MaterialDesignOutlinedButton}" />
+
+                    <Button
+                        Grid.Column="8"
+                        Command="{Binding TestConnectionCommand}"
+                        Content="测试"
+                        Style="{StaticResource MaterialDesignOutlinedButton}" />
+                </Grid>
+            </StackPanel>
+        </materialDesign:Card>
+
+        <!--  查询区  -->
+        <Grid Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <materialDesign:Card
+                Grid.Row="0"
+                Margin="0,0,0,12"
+                Padding="16">
+                <StackPanel>
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock
+                            Grid.Column="0"
+                            FontSize="15"
+                            FontWeight="Medium"
+                            Text="SQL 查询" />
+                        <StackPanel
+                            Grid.Column="1"
+                            Orientation="Horizontal">
+                            <ComboBox
+                                Width="240"
+                                Margin="0,0,8,0"
+                                materialDesign:HintAssist.Hint="快速查询模板"
+                                DisplayMemberPath="Name"
+                                ItemsSource="{Binding QueryTemplates}"
+                                SelectedItem="{Binding SelectedTemplate}" />
+                            <Button
+                                Command="{Binding ExecuteQueryCommand}"
+                                Content="执行查询"
+                                Style="{StaticResource MaterialDesignRaisedButton}" />
+                        </StackPanel>
+                    </Grid>
+
+                    <TextBox
+                        MinHeight="100"
+                        MaxHeight="150"
+                        VerticalContentAlignment="Top"
+                        materialDesign:HintAssist.Hint="SQL 语句"
+                        AcceptsReturn="True"
+                        FontFamily="Consolas"
+                        Text="{Binding QuerySql, UpdateSourceTrigger=PropertyChanged}"
+                        TextWrapping="Wrap"
+                        VerticalScrollBarVisibility="Auto" />
+                </StackPanel>
+            </materialDesign:Card>
+
+            <materialDesign:Card
+                Grid.Row="1"
+                Padding="16">
+                <DockPanel>
+                    <Grid DockPanel.Dock="Top" Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock
+                            Grid.Column="0"
+                            FontSize="15"
+                            FontWeight="Medium"
+                            Text="查询结果" />
+                        <TextBlock
+                            Grid.Column="1"
+                            Margin="0,0,16,0"
+                            VerticalAlignment="Center"
+                            Foreground="#666"
+                            Text="{Binding QueryDurationText}" />
+                        <TextBlock
+                            Grid.Column="2"
+                            VerticalAlignment="Center"
+                            Foreground="#666"
+                            Text="{Binding ResultRowCountText}" />
+                    </Grid>
+
+                    <DataGrid
+                        AutoGenerateColumns="True"
+                        BorderBrush="LightGray"
+                        BorderThickness="1"
+                        CanUserAddRows="False"
+                        CanUserDeleteRows="False"
+                        CellStyle="{StaticResource FixedDataGridCellStyle}"
+                        HeadersVisibility="Column"
+                        IsReadOnly="True"
+                        ItemsSource="{Binding QueryResult}"
+                        RowHeaderStyle="{StaticResource FixedDataGridRowHeaderStyle}" />
+                </DockPanel>
+            </materialDesign:Card>
+        </Grid>
+
+        <!--  日志区  -->
+        <materialDesign:Card
+            Grid.Row="3"
+            Padding="0">
+            <DockPanel>
+                <Grid DockPanel.Dock="Top" Margin="16,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon
+                            Width="18"
+                            Height="18"
+                            Margin="0,0,8,0"
+                            VerticalAlignment="Center"
+                            Foreground="#FF9800"
+                            Kind="MessageText" />
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            FontSize="14"
+                            FontWeight="Medium"
+                            Text="操作日志" />
+                    </StackPanel>
+                    <Button
+                        Grid.Column="1"
+                        Command="{Binding ClearLogCommand}"
+                        Content="清空"
+                        Style="{StaticResource MaterialDesignOutlinedButton}" />
+                </Grid>
+
+                <Border
+                    Margin="16,0,16,12"
+                    Background="#263238"
+                    CornerRadius="6">
+                    <ListBox
+                        Background="Transparent"
+                        BorderThickness="0"
+                        FontFamily="Consolas"
+                        FontSize="13"
+                        Foreground="White"
+                        ItemsSource="{Binding LogMessages}"
+                        ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem">
+                                <Setter Property="Padding" Value="12,3" />
+                                <Setter Property="Margin" Value="0" />
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                    </ListBox>
+                </Border>
+            </DockPanel>
+        </materialDesign:Card>
+    </Grid>
+</UserControl>
